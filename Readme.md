@@ -8,6 +8,8 @@ This program transforms each photo such that the the moon is on the same positio
 The output images are .png files with enabled alpha channel.
 Every coordinate without image information through the transformation has the color value 0.
 
+Windows pre-build binary can be found [here](https://github.com/TinyTinni/PhotoAlignment/releases/).
+
 ## Usage
 Use the console to call the program.
 ```
