@@ -4,7 +4,7 @@
 #include <clara.hpp>
 
 #include <spdlog/spdlog.h>
-#include <fmt/ostream.h>
+#include <spdlog/fmt/ostr.h>
 
 #include <iostream>
 
