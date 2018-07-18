@@ -14,7 +14,6 @@ if (NOT spdlog_FOUND)
         spdlog_git
         PREFIX ${CMAKE_BINARY_DIR}/spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-		GIT_TAG ${BRANCH}
         TIMEOUT 10
         UPDATE_COMMAND ${GIT_EXECUTABLE} pull
         CONFIGURE_COMMAND ""
@@ -32,7 +31,7 @@ if (NOT spdlog_FOUND)
     add_library(spdlog::spdlog ALIAS spdlog)
 endif()
 
-#find_package(clara QUIET)
+find_package(clara QUIET)
 if (NOT clara_FOUND)
     include(ExternalProject)
     find_package(Git REQUIRED)
@@ -41,7 +40,6 @@ if (NOT clara_FOUND)
         clara_git
         PREFIX ${CMAKE_BINARY_DIR}/clara
         GIT_REPOSITORY https://github.com/catchorg/Clara.git
-		GIT_TAG ${BRANCH}
         TIMEOUT 10
         UPDATE_COMMAND ${GIT_EXECUTABLE} pull
         CONFIGURE_COMMAND ""
@@ -64,8 +62,15 @@ add_executable(PhotoAlignment ${SRC} "Readme.md")
 set(TARGET_NAME PhotoAlignment)
 target_link_libraries(${TARGET_NAME} PRIVATE spdlog::spdlog clara::clara ${OpenCV_LIBS})
 
-## enable C++17 for parallel algorithms
-set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
+find_package(OpenMP)
+set(USE_OPENMP ON CACHE BOOL "Use OpenMP if found on system")
+if(OpenMP_FOUND)
+    target_link_libraries(${TARGET_NAME} PRIVATE OpenMP::OpenMP_CXX)
+    target_compile_definitions(${TARGET_NAME} PRIVATE USE_OPENMP=1)
+endif()
+
+## enable c++14
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD_REQUIRED 14)
 if(MSVC)
-    set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "/std:c++17")
+    set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "/std:c++14")
 endif(MSVC)

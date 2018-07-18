@@ -4,7 +4,8 @@
 #include <clara.hpp>
 
 #include <spdlog/spdlog.h>
-#include <fmt/ostream.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/fmt/bundled/ostream.h>
 
 #include <iostream>
 
@@ -13,8 +14,6 @@
 #include <vector>
 #include <numeric>
 
-#include <execution>
-#include <atomic>
 #include <chrono>
 
 namespace fs = std::experimental::filesystem;
@@ -100,19 +99,19 @@ template<typename T>
 void transform_files(const cv::Mat ref_img, std::vector<fs::path> files , const fs::path& output_dir, const T& callable)
 {
     const size_t num_files = files.size();
-    std::mutex output_mutex;
     size_t processed = 0;
 
-    std::for_each(std::execution::par, std::begin(files), std::end(files),
-        [&](const auto& file)
+#pragma omp parallel for shared(processed)
+    for (int i = 0; i < files.size(); ++i)
     {
+        const auto& file = files[i];
         const auto input_str = file.string();
         auto output_file = output_dir;
         output_file /= file.filename();
         output_file.replace_extension(".png");
         const auto output_str = output_file.string();
 
-        cv::Mat img = cv::imread(input_str, cv::ImreadModes::IMREAD_UNCHANGED);
+        cv::Mat img = cv::imread(input_str, cv::ImreadModes::IMREAD_COLOR);
 
         if (!img.data)
         {
@@ -143,9 +142,8 @@ void transform_files(const cv::Mat ref_img, std::vector<fs::path> files , const 
             }
         }
         const size_t p = ++processed;
-        std::lock_guard<std::mutex> lm(output_mutex);
         fmt::print("\rProcessed files {}/{}", p, num_files);
-    });
+    };
     fmt::print("\n");
 }
 
@@ -154,7 +152,7 @@ int main(int argc, char* argv[])
     spdlog::set_pattern("[%t] %L: %v");
     const auto options = parse_command_line(argc, argv);
     
-    const cv::Mat ref_img = cv::imread(options.ref_image.string(), cv::ImreadModes::IMREAD_UNCHANGED);
+    const cv::Mat ref_img = cv::imread(options.ref_image.string(), cv::ImreadModes::IMREAD_COLOR);
     if (!ref_img.data)
     {
         g_log->critical("Could not read reference image: {}", options.ref_image);
