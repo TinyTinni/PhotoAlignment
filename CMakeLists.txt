@@ -74,3 +74,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD_REQUIRED 14)
 if(MSVC)
     set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "/std:c++14")
 endif(MSVC)
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    target_link_libraries(${TARGET_NAME} PRIVATE stdc++fs)
+endif(CMAKE_COMPILER_IS_GNUCXX)
