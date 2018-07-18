@@ -5,10 +5,13 @@ For example, a batch of moon photos taken over a period of time (e.g. 1min).
 The moon will move on the photos.
 This program transforms each photo such that the the moon is on the same position.
 
+![Illustration](/img/example.jpg)
+
 The output images are .png files with enabled alpha channel.
 Every coordinate without image information through the transformation has the color value 0.
 
 Windows pre-build binary can be found [here](https://github.com/TinyTinni/PhotoAlignment/releases/).
+
 
 ## Usage
 Use the console to call the program.
