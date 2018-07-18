@@ -123,7 +123,6 @@ void transform_files(const cv::Mat ref_img, std::vector<fs::path> files , const 
             {
                 cv::Mat transformed;
                 cv::Mat M = cv::estimateRigidTransform(img, ref_img, false);
-                //lancros interpolation since we can expect rotations
 
                 if (img.channels() != 4)
                 {
@@ -133,6 +132,9 @@ void transform_files(const cv::Mat ref_img, std::vector<fs::path> files , const 
                     std::vector<cv::Mat> v{ std::move(img), std::move(ones) };
                     cv::merge(std::move(v), img);
                 }
+
+                // estimate transformation
+                // lancros interpolation since we can expect rotations
                 cv::warpAffine(img, transformed, M, img.size(), cv::INTER_LANCZOS4, cv::BORDER_TRANSPARENT);
                 cv::imwrite(output_str, transformed);
             }
