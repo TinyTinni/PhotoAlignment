@@ -32,7 +32,8 @@ PhotoAlignment mid_image.jpg -i ./my_image_series -o ./transformed
 
 ## Build Requirements
 - [OpenCV](https://opencv.org/)
-- C++17
+- C++14 (with experimental filesystem support)
+- OpenMP (optional)
 
 ## Additional use of the following libs:
 - [spdlog](https://github.com/gabime/spdlog)
