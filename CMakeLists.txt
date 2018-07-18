@@ -3,7 +3,7 @@ project (PhotoAlignment)
 
 #############################
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED core imgcodecs video)
 
 find_package(spdlog QUIET)
 if (NOT spdlog_FOUND)
